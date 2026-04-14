@@ -92,10 +92,8 @@ const Index = () => {
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
-              /* Adicionamos isolate para criar um novo contexto de camadas apenas aqui dentro */
               <div key={i} className="relative flex flex-col items-center text-center gap-4 isolate">
 
-                {/* O ícone precisa ser z-10 ou maior */}
                 <div className="w-16 h-16 rounded-2xl bg-[#121212] border border-primary/20 flex items-center justify-center relative z-20">
                   <s.icon className="w-7 h-7 text-primary" />
                   <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
@@ -107,7 +105,6 @@ const Index = () => {
                   {s.label}
                 </p>
 
-                {/* A linha agora tem z-10 (fica entre o fundo e o ícone) */}
                 {i < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-8 left-1/2 w-full z-10">
                     <div className="w-full border-t-2 border-dashed border-primary/20 h-px"></div>
@@ -132,7 +129,7 @@ const Index = () => {
             </p>
             <Button variant="hero">
               <Music className="w-5 h-5" />
-              Start Curating with Spotify
+              Start Creating with Spotify
             </Button>
           </div>
         </div>
