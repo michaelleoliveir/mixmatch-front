@@ -53,10 +53,6 @@ const HeroVisual = () => {
             </rect>
           );
         })}
-        
-        {/* Center circle */}
-        <circle cx="200" cy="200" r="40" fill="hsl(141, 73%, 42%)" opacity="0.15" />
-        <circle cx="200" cy="200" r="20" fill="hsl(141, 73%, 42%)" opacity="0.3" />
       </svg>
     </div>
   );

@@ -30,17 +30,6 @@ const steps = [
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 glass">
-        <div className="container flex items-center justify-between h-16">
-          <span className="text-xl font-bold tracking-tight">
-            <span className="text-primary">Mix</span>
-            <span className="text-foreground">Match</span>
-          </span>
-          <Button size="sm">Get Started</Button>
-        </div>
-      </nav>
-
       {/* Hero */}
       <section className="pt-32 pb-20 px-4">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
@@ -55,8 +44,8 @@ const Index = () => {
               and discoveries.
             </p>
             <Button variant="hero">
-              <Music className="w-5 h-5" />
-              Log in with Spotify to Start
+              <Music className="w-6 h-6" />
+              Login with Spotify
             </Button>
           </div>
           <HeroVisual />
@@ -103,18 +92,26 @@ const Index = () => {
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
-              <div key={i} className="relative flex flex-col items-center text-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center relative">
+              /* Adicionamos isolate para criar um novo contexto de camadas apenas aqui dentro */
+              <div key={i} className="relative flex flex-col items-center text-center gap-4 isolate">
+
+                {/* O ícone precisa ser z-10 ou maior */}
+                <div className="w-16 h-16 rounded-2xl bg-[#121212] border border-primary/20 flex items-center justify-center relative z-20">
                   <s.icon className="w-7 h-7 text-primary" />
                   <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                     {i + 1}
                   </span>
                 </div>
+
                 <p className="text-sm text-muted-foreground max-w-[180px]">
                   {s.label}
                 </p>
-                {i < 3 && (
-                  <div className="hidden lg:block absolute top-8 left-[calc(100%_-_12px)] w-[calc(100%_-_64px)] border-t border-dashed border-primary/20" />
+
+                {/* A linha agora tem z-10 (fica entre o fundo e o ícone) */}
+                {i < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-8 left-1/2 w-full z-10">
+                    <div className="w-full border-t-2 border-dashed border-primary/20 h-px"></div>
+                  </div>
                 )}
               </div>
             ))}
@@ -145,7 +142,7 @@ const Index = () => {
       <footer className="py-8 px-4 border-t border-border/50">
         <div className="container flex items-center justify-between text-sm text-muted-foreground">
           <span>
-            <span className="text-primary font-semibold">Mix</span>Match © 2026
+            <span className="text-primary font-semibold">Michaelle </span>Oliveira © 2026
           </span>
           <span>Powered by AI & Spotify</span>
         </div>
