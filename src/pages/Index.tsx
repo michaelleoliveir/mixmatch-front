@@ -27,6 +27,10 @@ const steps = [
   { icon: Headphones, label: "The playlist appears instantly in your Spotify app" },
 ];
 
+const handleLogin = () => {
+  window.location.href = import.meta.env.VITE_BACKEND_API + '/auth/spotify/login'
+}
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -43,7 +47,7 @@ const Index = () => {
               and instantly create the perfect Spotify playlist from your library
               and discoveries.
             </p>
-            <Button variant="hero">
+            <Button variant="hero" onClick={handleLogin}>
               <Music className="w-6 h-6" />
               Login with Spotify
             </Button>
@@ -127,7 +131,7 @@ const Index = () => {
               Join thousands of music lovers who let AI enhance their listening
               experience every day.
             </p>
-            <Button variant="hero">
+            <Button variant="hero" onClick={handleLogin}>
               <Music className="w-5 h-5" />
               Start Creating with Spotify
             </Button>
