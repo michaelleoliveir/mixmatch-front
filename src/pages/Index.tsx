@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import HeroVisual from "@/components/HeroVisual";
 import { Brain, Sparkles, Music, LogIn, MessageSquare, Cpu, Headphones } from "lucide-react";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 const features = [
   {
@@ -32,6 +34,17 @@ const handleLogin = () => {
 }
 
 const Index = () => {
+  useEffect(() => {
+    if (sessionStorage.getItem('auth_error')) {
+      toast.error("Access Denied", {
+        description: "You must be logged in to create playlists.",
+        duration: 5000,
+      });
+
+      sessionStorage.removeItem('auth_error')
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}

@@ -1,8 +1,8 @@
-import HeroVisual from '@/components/HeroVisual'
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner';
 
 const CreatePlaylist = () => {
     const [errorMessage, setErrorMessage] = useState(null);
@@ -24,6 +24,7 @@ const CreatePlaylist = () => {
         }
 
         if (!storedToken) {
+            sessionStorage.setItem('auth_error', 'true');
             window.location.href = '/';
             return;
         }
@@ -79,7 +80,7 @@ const CreatePlaylist = () => {
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <nav className="fixed top-0 w-full z-50 glass border-b border-border/50">
-                <div className="container flex items-center justify-between h-20 px-4">
+                <div className="container flex items-center justify-between h-16 px-4">
 
                     <div className="flex items-center gap-4">
                         <div className="relative group">
@@ -92,8 +93,8 @@ const CreatePlaylist = () => {
                             />
                         </div>
 
-                        <span className="text-xl font-bold tracking-tight hidden sm:block">
-                            <span className="text-muted-foreground font-medium">Welcome, </span>
+                        <span className="text-lg font-bold tracking-tight hidden sm:block">
+                            <span className="text-muted-foreground">Welcome, </span>
                             <span className="text-primary">{user || 'Explorer'}</span>
                         </span>
                     </div>
