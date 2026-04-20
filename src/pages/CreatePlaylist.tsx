@@ -1,20 +1,36 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { RefreshCw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/utils/useAuth';
 import { usePreview } from '@/utils/usePreview';
+import { useCreatePlaylist } from '@/utils/useCreatePlaylist';
 
 const CreatePlaylist = () => {
     const [mood, setMood] = useState('');
+    const [isSaved, setIsSaved] = useState(false);
 
     const { user, icon, handleLogout, isAuthLoading } = useAuth();
-    const { errorMessage, setErrorMessage, isGenerating, previewData, getPreview } = usePreview();
+    const { errorMessage, setErrorMessage, isGenerating, previewData, getPreview, clearPreview } = usePreview();
+    const { createPlaylist, isAdding } = useCreatePlaylist();
 
-    const handlePreview = () =>{
+    const handlePreview = () => {
         getPreview(mood)
+    }
+
+    const handleCreatePlaylist = () => {
+        if (previewData) {
+            const uris = previewData.tracks.map((t: { uri: string; }) => t.uri);
+            createPlaylist(previewData.playlist_name, uris);
+            setIsSaved(true);
+        }
+    }
+
+    const handleReset = () => {
+        setIsSaved(false);
+        clearPreview();
     }
 
     if (isAuthLoading) {
@@ -94,12 +110,12 @@ const CreatePlaylist = () => {
                                 disabled={isGenerating}
                                 size="lg"
                                 className={`
-                                            h-14 px-8 rounded-2xl font-bold text-lg transition-all min-w-[200px] relative overflow-hidden
-                                        ${isGenerating
+                                                h-14 px-8 rounded-2xl font-bold text-lg transition-all min-w-[200px] relative overflow-hidden
+                                            ${isGenerating
                                         ? 'cursor-not-allowed grayscale'
                                         : 'bg-primary shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]'
                                     }
-                                `}
+                                    `}
                             >
                                 {isGenerating && (
                                     <motion.div
@@ -132,66 +148,101 @@ const CreatePlaylist = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="mt-24 space-y-6"
+                            className="mt-24 space-y-6 w-full max-w-5xl mx-auto px-4"
                         >
-                            <div className="flex justify-between items-end">
-                                <h2 className="text-2xl font-bold text-white">
+                            <div className="flex justify-between items-end border-b border-white/10 pb-4">
+                                <h2 className="text-2xl font-bold text-white tracking-tight">
                                     {previewData.playlist_name}
                                 </h2>
-                                <span className="text-sm text-gray-400">
+                                <span className="text-base text-gray-400 font-medium hidden md:block">
                                     {previewData.tracks.length} songs
                                 </span>
                             </div>
 
-                            <div className="w-full max-w-4xl mx-auto">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    {previewData.tracks.map((track, index) => (
-                                        <motion.div
-                                            key={track.uri}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                            className="flex items-center gap-3 bg-secondary/20 p-2 rounded-xl border border-white/5 hover:bg-secondary/40 transition-colors group"
-                                        >
-                                            <div className="relative overflow-hidden rounded-md w-12 h-12 shrink-0">
-                                                <img
-                                                    src={track.album_image}
-                                                    alt={track.name}
-                                                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                                                />
-                                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {previewData.tracks.map((track, index) => (
+                                    <motion.div
+                                        key={track.uri}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        className="flex items-center gap-4 bg-white/5 p-3 md:p-4 rounded-2xl border border-white/5 hover:bg-white/10 transition-all duration-300 group"
+                                    >
+                                        <div className="relative overflow-hidden rounded-lg w-14 md:w-16 h-14 md:h-16 shrink-0 shadow-2xl">
+                                            <img
+                                                src={track.album_image}
+                                                alt={track.name}
+                                                className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                                            />
+                                        </div>
 
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-bold text-white text-sm truncate">{track.name}</p>
-                                                <p className="text-xs text-gray-400 truncate">{track.artist}</p>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-white text-base truncate group-hover:text-[#1DB954] transition-colors">
+                                                {track.name}
+                                            </p>
+                                            <p className="text-sm text-gray-400 truncate">{track.artist}</p>
+                                        </div>
+                                    </motion.div>
+                                ))}
                             </div>
 
-                            <motion.button
-                                whileHover={{ scale: 1.03, filter: "brightness(1.1)" }}
-                                whileTap={{ scale: 0.95 }}
-                                className="
-    relative overflow-hidden
-    w-full md:w-[35%] flex justify-center m-auto py-4 
-    bg-[#1DB954] text-black font-extrabold text-sm uppercase
-    rounded-full shadow-[0_10px_30px_-10px_rgba(29,185,84,0.5)] 
-    transition-all duration-300 mt-8
-"
-                            >
-                                <span className="flex items-center gap-2">
-                                    Add to Library
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                        className="w-5 h-5"
+                            <div className="flex justify-center mt-12 w-full">
+                                {isSaved ? (
+                                    <motion.button
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        onClick={handleReset}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="flex items-center gap-2 px-10 py-5 bg-white text-black font-black text-base uppercase tracking-widest rounded-full shadow-xl transition-all"
                                     >
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
-                                    </svg>
-                                </span>
-                            </motion.button>
+                                        Generate another one
+                                        <RefreshCw className="w-5 h-5" />
+                                    </motion.button>
+                                ) : (
+                                    // SEU BOTÃO ATUAL DE ADICIONAR
+                                    <motion.button
+                                        onClick={handleCreatePlaylist}
+                                        disabled={isAdding || !previewData}
+                                        whileHover={!isAdding ? { scale: 1.02, filter: "brightness(1.1)" } : {}}
+                                        whileTap={!isAdding ? { scale: 0.98 } : {}}
+                                        className={`
+                relative overflow-hidden
+                w-full md:w-fit md:min-w-[300px] flex justify-center items-center px-10 py-5 
+                text-black font-black text-base uppercase tracking-widest
+                rounded-full transition-all duration-300
+                ${isAdding
+                                                ? 'bg-gray-500 cursor-not-allowed'
+                                                : 'bg-[#1DB954] shadow-[0_15px_35px_-10px_rgba(29,185,84,0.4)]'
+                                            }
+            `}
+                                    >
+                                        {isAdding && (
+                                            <motion.div
+                                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                                animate={{ x: ['-100%', '100%'] }}
+                                                transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                                            />
+                                        )}
+
+                                        <span className="flex items-center gap-3 relative z-10">
+                                            {isAdding ? (
+                                                <>
+                                                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+                                                    <span>Adding to library...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Add to Library
+                                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+                                                    </svg>
+                                                </>
+                                            )}
+                                        </span>
+                                    </motion.button>
+                                )}
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>

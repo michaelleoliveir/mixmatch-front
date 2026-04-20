@@ -1,11 +1,17 @@
 import { useCallback, useState } from "react"
+import { toast } from "sonner";
 
-export const usePreview = () =>{
+export const usePreview = () => {
     const [errorMessage, setErrorMessage] = useState(null);
-    const [isGenerating, setIsGenerating] = useState(null);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [previewData, setPreviewData] = useState(null);
 
-    const getPreview = useCallback(async(mood: string) => {
+    const clearPreview = useCallback(() => {
+        setPreviewData(null);
+        setErrorMessage(null)
+    }, [])
+
+    const getPreview = useCallback(async (mood: string) => {
         if (!mood) {
             setErrorMessage('Please, enter a mood to generate a playlist');
             return;
@@ -26,16 +32,22 @@ export const usePreview = () =>{
             const data = await response.json();
 
             if (!response.ok) {
-                setErrorMessage('An error occurred while generating the playlist preview. Please, try again later.');
+                const message = data.message || 'An unexpected error occurred.';
+
+                toast.error("Recommendation Error", { description: message });
+
+                setPreviewData(null);
+                return;
             }
 
             setPreviewData(data);
         } catch (error) {
-            setErrorMessage('An error occurred while generating the playlist preview. Please, try again later.');
+            const genericError = 'Server connection failed. Please try again.';
+            toast.error("Connection Error", { description: genericError });
         } finally {
             setIsGenerating(false);
         }
     }, []);
 
-    return { previewData, isGenerating, errorMessage, setErrorMessage, getPreview };
+    return { previewData, isGenerating, errorMessage, setErrorMessage, getPreview, clearPreview };
 }
