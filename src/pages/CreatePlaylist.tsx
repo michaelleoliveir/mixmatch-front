@@ -37,6 +37,12 @@ const CreatePlaylist = () => {
         return <div className="min-h-screen bg-background" />;
     }
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handlePreview();
+        }
+    }
+
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <nav className="fixed top-0 w-full z-50 glass border-b border-border/50">
@@ -87,6 +93,7 @@ const CreatePlaylist = () => {
                         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-[90%]">
                             <div className="relative flex-grow">
                                 <Input
+                                    onKeyDown={handleKeyDown}
                                     value={mood}
                                     onChange={(e) => {
                                         setMood(e.target.value)
@@ -200,47 +207,61 @@ const CreatePlaylist = () => {
                                         <RefreshCw className="w-5 h-5" />
                                     </motion.button>
                                 ) : (
-                                    // SEU BOTÃO ATUAL DE ADICIONAR
-                                    <motion.button
-                                        onClick={handleCreatePlaylist}
-                                        disabled={isAdding || !previewData}
-                                        whileHover={!isAdding ? { scale: 1.02, filter: "brightness(1.1)" } : {}}
-                                        whileTap={!isAdding ? { scale: 0.98 } : {}}
-                                        className={`
+                                    <div className='flex flex-row gap-4 items-center'>
+                                        <motion.button
+                                            onClick={handleReset}
+                                            whileHover={{ scale: 1.1, rotate: -10 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            className="p-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-colors duration-300 group"
+                                            title="Reset Playlist"
+                                        >
+                                            <RefreshCw
+                                                className="w-6 h-6 text-muted-foreground group-hover:text-white transition-colors duration-300"
+                                            />
+                                        </motion.button>
+
+                                        <motion.button
+                                            onClick={handleCreatePlaylist}
+                                            disabled={isAdding || !previewData}
+                                            whileHover={!isAdding ? { scale: 1.02, filter: "brightness(1.1)" } : {}}
+                                            whileTap={!isAdding ? { scale: 0.98 } : {}}
+                                            className={`
                 relative overflow-hidden
                 w-full md:w-fit md:min-w-[300px] flex justify-center items-center px-10 py-5 
                 text-black font-black text-base uppercase tracking-widest
                 rounded-full transition-all duration-300
                 ${isAdding
-                                                ? 'bg-gray-500 cursor-not-allowed'
-                                                : 'bg-[#1DB954] shadow-[0_15px_35px_-10px_rgba(29,185,84,0.4)]'
-                                            }
+                                                    ? 'bg-gray-500 cursor-not-allowed'
+                                                    : 'bg-[#1DB954] shadow-[0_15px_35px_-10px_rgba(29,185,84,0.4)]'
+                                                }
             `}
-                                    >
-                                        {isAdding && (
-                                            <motion.div
-                                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                                                animate={{ x: ['-100%', '100%'] }}
-                                                transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                                            />
-                                        )}
+                                        >
 
-                                        <span className="flex items-center gap-3 relative z-10">
-                                            {isAdding ? (
-                                                <>
-                                                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/20 border-t-black" />
-                                                    <span>Adding to library...</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    Add to Library
-                                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
-                                                    </svg>
-                                                </>
+                                            {isAdding && (
+                                                <motion.div
+                                                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                                    animate={{ x: ['-100%', '100%'] }}
+                                                    transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                                                />
                                             )}
-                                        </span>
-                                    </motion.button>
+
+                                            <span className="flex items-center gap-3 relative z-10">
+                                                {isAdding ? (
+                                                    <>
+                                                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+                                                        <span>Adding to library...</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        Add to Library
+                                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+                                                        </svg>
+                                                    </>
+                                                )}
+                                            </span>
+                                        </motion.button>
+                                    </div>
                                 )}
                             </div>
                         </motion.div>

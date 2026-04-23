@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import HeroVisual from "@/components/HeroVisual";
 import { Brain, Sparkles, Music, LogIn, MessageSquare, Cpu, Headphones } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const features = [
@@ -34,6 +34,8 @@ const handleLogin = () => {
 }
 
 const Index = () => {
+  const [isChecking, setIsChecking] = useState(true);
+
   useEffect(() => {
     if (sessionStorage.getItem('auth_error')) {
       toast.error("Access Denied", {
@@ -44,6 +46,20 @@ const Index = () => {
       sessionStorage.removeItem('auth_error')
     }
   }, []);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('spotify_token');
+
+    if (token) {
+      window.location.href = '/create-playlist'
+    } else {
+      setIsChecking(false)
+    }
+  }, []);
+
+  if (isChecking) {
+    return <div className="min-h-screen bg-background" />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
