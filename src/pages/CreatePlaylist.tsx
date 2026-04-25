@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { RefreshCw, Sparkles } from 'lucide-react';
+import { LogOut, RefreshCw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,7 @@ const CreatePlaylist = () => {
     const handleReset = () => {
         setIsSaved(false);
         clearPreview();
+        setMood('');
     }
 
     if (isAuthLoading) {
@@ -45,32 +46,44 @@ const CreatePlaylist = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            <nav className="fixed top-0 w-full z-50 glass border-b border-border/50">
-                <div className="container flex items-center justify-between h-16 px-4">
+            <nav className="fixed top-0 w-full z-50 py-2 backdrop-blur-md bg-background/70 border-b border-border/40">
+                <div className="container flex items-center justify-between h-16 px-6">
 
-                    <div className="flex items-center gap-4">
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-primary/50 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                    <div className="flex items-center gap-3 group cursor-default">
+                        <div className="relative">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-full blur opacity-20 group-hover:opacity-50 transition duration-500"></div>
 
                             <img
                                 src={icon || 'https://github.com/identicons/jasonlong.png'}
                                 alt="User Icon"
-                                className="relative h-10 w-10 rounded-full object-cover border-2 border-primary/20 bg-secondary shadow-inner"
+                                className="relative h-10 w-10 rounded-full object-cover border-[1.5px] border-primary/30 ring-2 ring-background ring-offset-1 transition-transform duration-300 group-hover:scale-105"
                             />
+
+                            <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-500"></span>
                         </div>
 
-                        <span className="text-lg font-bold tracking-tight hidden sm:block">
-                            <span className="text-muted-foreground">Welcome, </span>
-                            <span className="text-primary">{user || 'Explorer'}</span>
-                        </span>
+                        <div className="flex flex-col leading-none hidden sm:flex">
+                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                                Welcome back
+                            </span>
+                            <span className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 group-hover:from-primary group-hover:to-purple-500 transition-all duration-300">
+                                {user || 'Explorer'}
+                            </span>
+                        </div>
                     </div>
 
-                    <Button
-                        size="sm"
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </Button>
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            onClick={handleLogout}
+                        >
+                            <LogOut className="mr-2 h-4 w-4" /> 
+                            Logout
+                        </Button>
+                    </div>
+
                 </div>
             </nav>
 

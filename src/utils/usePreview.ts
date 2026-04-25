@@ -32,7 +32,7 @@ export const usePreview = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                const message = data.message || 'An unexpected error occurred.';
+                const message = 'An unexpected error occurred. Try again later.';
 
                 toast.error("Recommendation Error", { description: message });
 
