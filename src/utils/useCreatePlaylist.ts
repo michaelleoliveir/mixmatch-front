@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 export const useCreatePlaylist = () => {
     const [isAdding, setIsAdding] = useState(false);
+    const [url, setUrl] = useState(null);
 
     const createPlaylist = useCallback(async (playlistName: string, uris: string[]) => {
         setIsAdding(true);
@@ -22,9 +23,11 @@ export const useCreatePlaylist = () => {
             });
 
             if (response.ok) {
+                const data = await response.json();
+                setUrl(data.playlist_url);
                 toast.success("Playlist saved!", {
-                description: `"${playlistName}" is now in your Spotify library.`,
-            });
+                    description: `"${playlistName}" is now in your Spotify library.`,
+                });
             } else {
                 throw new Error();
             }
@@ -37,5 +40,5 @@ export const useCreatePlaylist = () => {
         }
     }, []);
 
-    return { createPlaylist, isAdding }
+    return { createPlaylist, isAdding, url }
 }

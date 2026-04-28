@@ -14,7 +14,7 @@ const CreatePlaylist = () => {
 
     const { user, icon, handleLogout, isAuthLoading } = useAuth();
     const { errorMessage, setErrorMessage, isGenerating, previewData, getPreview, clearPreview } = usePreview();
-    const { createPlaylist, isAdding } = useCreatePlaylist();
+    const { createPlaylist, isAdding, url } = useCreatePlaylist();
 
     const handlePreview = () => {
         getPreview(mood)
@@ -79,7 +79,7 @@ const CreatePlaylist = () => {
                             className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                             onClick={handleLogout}
                         >
-                            <LogOut className="mr-2 h-4 w-4" /> 
+                            <LogOut className="mr-2 h-4 w-4" />
                             Logout
                         </Button>
                     </div>
@@ -208,17 +208,33 @@ const CreatePlaylist = () => {
 
                             <div className="flex justify-center mt-12 w-full">
                                 {isSaved ? (
-                                    <motion.button
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        onClick={handleReset}
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        className="flex items-center gap-2 px-10 py-5 bg-white text-black font-black text-base uppercase tracking-widest rounded-full shadow-xl transition-all"
-                                    >
-                                        Generate another one
-                                        <RefreshCw className="w-5 h-5" />
-                                    </motion.button>
+                                    <div className="flex flex-col md:flex-row gap-4 items-center">
+                                        <motion.button
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            onClick={() => window.open(url, '_blank')}
+                                            whileHover={{ scale: 1.05, filter: "brightness(1.1)" }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="flex items-center gap-3 px-10 py-5 bg-[#1DB954] text-black font-black text-base uppercase tracking-widest rounded-full shadow-[0_15px_35px_-10px_rgba(29,185,84,0.4)] transition-all"
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                                <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.5 17.33c-.22.36-.68.47-1.05.25-2.81-1.73-6.35-2.12-10.51-1.17-.4.1-.82-.14-.92-.54-.1-.4.15-.82.55-.92 4.54-1.04 8.44-.6 11.63 1.35.37.23.48.69.3 1.03zm1.45-3.26c-.28.45-.87.59-1.32.31-3.22-1.98-8.13-2.55-11.94-1.39-.5.15-1.04-.13-1.19-.64-.15-.5.13-1.04.64-1.19 4.35-1.32 9.75-.68 13.5 1.62.45.28.6.87.31 1.3zm.14-3.41c-3.86-2.29-10.23-2.5-13.97-1.37-.6.18-1.23-.17-1.41-.77-.18-.6.17-1.23.77-1.41 4.29-1.3 11.33-1.04 15.8 1.61.54.32.72 1.03.4 1.57-.32.54-1.03.72-1.59.4z" />
+                                            </svg>
+                                            Open in Spotify
+                                        </motion.button>
+
+                                        <motion.button
+                                            initial={{ opacity: 0, x: 10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            onClick={handleReset}
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className="flex items-center gap-2 px-10 py-5 bg-white/10 hover:bg-white/20 text-white font-black text-base uppercase tracking-widest rounded-full backdrop-blur-md transition-all border border-white/10"
+                                        >
+                                            Generate another one
+                                            <RefreshCw className="w-5 h-5" />
+                                        </motion.button>
+                                    </div>
                                 ) : (
                                     <div className='flex flex-row gap-4 items-center'>
                                         <motion.button
