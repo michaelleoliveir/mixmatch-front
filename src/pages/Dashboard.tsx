@@ -4,6 +4,7 @@ import { Users } from "lucide-react";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/utils/useAuth";
+import { useLoadData } from "@/utils/useLoadData";
 
 interface Track {
   name: string;
@@ -41,60 +42,13 @@ const fadeUp = {
 };
 
 const Dashboard = () => {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const {loadData, isLoading, data} = useLoadData();
 
   const {isAuthLoading} = useAuth();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("spotify_token");
-    const api = import.meta.env.VITE_BACKEND_API;
-
-    const mockData = {
-      profile: {
-        display_name: "mikl",
-        email: "michaelle.10@hotmail.com",
-        followers: 8,
-        icon: "https://i.scdn.co/image/ab6775700000ee855a7a1b9a1df6a35c857bdfb8"
-      },
-      tracks: {
-        tracks: [
-          { name: "Numa Ilha", artist: "Marina Sena", album_name: "Coisas Naturais", album_cover: "https://i.scdn.co/image/ab67616d0000b2737ae4d78852e406eff2f4eef6", explicit: false },
-          { name: "2.0", artist: "BTS", album_name: "ARIRANG", album_cover: "https://i.scdn.co/image/ab67616d0000b273dfa17fad7f190c901603270e", explicit: false },
-          { name: "Honey", artist: "Taylor Swift", album_name: "The Life of a Showgirl", album_cover: "https://i.scdn.co/image/ab67616d0000b273d7812467811a7da6e6a44902", explicit: true },
-          { name: "Taste Back", artist: "Harry Styles", album_name: "Kiss All The Time", album_cover: "https://i.scdn.co/image/ab67616d0000b27374959140f550b11049c18a38", explicit: false },
-          { name: "Body to Body", artist: "BTS", album_name: "ARIRANG", album_cover: "https://i.scdn.co/image/ab67616d0000b273dfa17fad7f190c901603270e", explicit: false }
-        ]
-      },
-      artists: {
-        artists: [
-          { name: "Taylor Swift", image: "https://i.scdn.co/image/ab6761610000e5ebe2e8e7ff002a4afda1c7147e" },
-          { name: "BTS", image: "https://i.scdn.co/image/ab6761610000e5ebf80ec63ea7a0ef0fba60957d" },
-          { name: "Harry Styles", image: "https://i.scdn.co/image/ab6761610000e5ebe309f8c3056a59f20d0968ca" },
-          { name: "ROSALÍA", image: "https://i.scdn.co/image/ab6761610000e5eb9354faf80eb87961466edfbf" }
-        ]
-      }
-    };
-
-    if (!token || !api) {
-      setTimeout(() => {
-        setData(mockData);
-        setLoading(false);
-      }, 800);
-      return;
-    }
-
-    fetch(`${api}/dashboard`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-    })
-      .then((r) => r.json())
-      .then((json) => setData(json))
-      .catch(() => setData(mockData)) // Fallback para o mock caso a API falhe
-      .finally(() => setLoading(false));
-  }, []);
+    loadData();
+  }, [loadData]);
 
   if (isAuthLoading) {
         return <div className="min-h-screen bg-background" />;
@@ -106,7 +60,7 @@ const Dashboard = () => {
 
       <main className="md:ml-64 px-6 md:px-10 py-10 pb-28 md:pb-10 max-w-6xl">
         {/* Hero / Spotlight */}
-        {loading || !data ? (
+        {isLoading || !data ? (
           <HeroSkeleton />
         ) : (
           <motion.section
@@ -154,7 +108,7 @@ const Dashboard = () => {
         <section className="mb-14">
           <h2 className="text-2xl font-bold mb-5">Top 10 Tracks</h2>
           <div className="bg-card rounded-2xl p-3 border border-white/5">
-            {loading || !data
+            {isLoading || !data
               ? Array.from({ length: 6 }).map((_, i) => (
                 <TrackSkeleton key={i} />
               ))
@@ -202,7 +156,7 @@ const Dashboard = () => {
         <section>
           <h2 className="text-2xl font-bold mb-5">Top 10 Artists</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
-            {loading || !data
+            {isLoading || !data
               ? Array.from({ length: 10 }).map((_, i) => (
                 <ArtistSkeleton key={i} />
               ))

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { LogOut, RefreshCw, Sparkles } from 'lucide-react';
+import { RefreshCw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
