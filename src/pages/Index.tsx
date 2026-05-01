@@ -1,6 +1,18 @@
 import { Button } from "@/components/ui/button";
 import HeroVisual from "@/components/HeroVisual";
-import { Brain, Sparkles, Music, LogIn, MessageSquare, Cpu, Headphones } from "lucide-react";
+import {
+  Brain,
+  Sparkles,
+  Music,
+  LogIn,
+  MessageSquare,
+  Cpu,
+  Headphones,
+  BarChart3,
+  Wand2,
+  TrendingUp,
+  Mic2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -25,8 +37,30 @@ const features = [
 const steps = [
   { icon: LogIn, label: "Log in with your Spotify account" },
   { icon: MessageSquare, label: "Describe your current mood or activity" },
-  { icon: Cpu, label: "Our AI curates and generates the playlist" },
+  { icon: Cpu, label: "Our AI analyzes and curates the perfect tracks" },
   { icon: Headphones, label: "The playlist appears instantly in your Spotify app" },
+];
+
+const previewTracks = [
+  { name: "Midnight City", artist: "M83", explicit: false },
+  { name: "Blinding Lights", artist: "The Weeknd", explicit: false },
+  { name: "HUMBLE.", artist: "Kendrick Lamar", explicit: true },
+  { name: "Redbone", artist: "Childish Gambino", explicit: true },
+  { name: "Sunflower", artist: "Post Malone, Swae Lee", explicit: false },
+];
+
+const previewArtists = [
+  { name: "Tame Impala", initials: "TI" },
+  { name: "Daft Punk", initials: "DP" },
+  { name: "Arctic Monkeys", initials: "AM" },
+  { name: "Frank Ocean", initials: "FO" },
+];
+
+const promptExamples = [
+  "Rainy day jazz vibe",
+  "Late-night coding focus",
+  "Sunday morning acoustic",
+  "High-energy gym session",
 ];
 
 const handleLogin = () => {
@@ -67,18 +101,22 @@ const Index = () => {
       <section className="pt-32 pb-20 px-4">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-primary">
+              <Sparkles className="w-3.5 h-3.5" /> AI Music Management Ecosystem
+            </span>
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               Sync Your Music{" "}
               <span className="text-gradient">to Your Mood</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg">
-              MixMatch uses Artificial Intelligence to analyze your current vibe
-              and instantly create the perfect Spotify playlist from your library
-              and discoveries.
+              MixMatch uses Artificial Intelligence to analyze your vibe and
+              instantly create the perfect Spotify playlist. Discover your
+              personalized insights and manage your favorite tracks all in one
+              place.
             </p>
             <Button variant="hero" onClick={handleLogin}>
               <Music className="w-6 h-6" />
-              Login with Spotify
+              Log in with Spotify to Start
             </Button>
           </div>
           <HeroVisual />
@@ -113,7 +151,169 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Steps */}
+      {/* Insights Dashboard Preview */}
+      <section className="py-24 px-4">
+        <div className="container grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6 order-2 lg:order-1">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-primary">
+              <BarChart3 className="w-3.5 h-3.5" /> Insights Dashboard
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+              Your music taste,{" "}
+              <span className="text-primary">visualized</span>
+            </h2>
+            <p className="text-muted-foreground max-w-lg">
+              Get a sneak peek at your personal listening profile. MixMatch
+              surfaces your top tracks and most-played artists so you always
+              know what's shaping your sound.
+            </p>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-3">
+                <TrendingUp className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-medium">Top tracks</span> with explicit badges and album context
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Mic2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-medium">Top artists</span> ranked from your real Spotify data
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-medium">Live updates</span> that refresh as your taste evolves
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Mockup */}
+          <div className="order-1 lg:order-2">
+            <div className="glass rounded-3xl p-6 md:p-7 glow relative overflow-hidden">
+              <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="flex items-center justify-between mb-5 relative">
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Profile</p>
+                  <p className="font-bold text-lg">Your Top Tracks</p>
+                </div>
+                <span className="text-xs px-2.5 py-1 rounded-full bg-primary/15 text-primary font-semibold">
+                  Live
+                </span>
+              </div>
+
+              <div className="space-y-2 relative">
+                {previewTracks.map((t, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors"
+                  >
+                    <span className="w-5 text-xs text-muted-foreground tabular-nums text-center">
+                      {i + 1}
+                    </span>
+                    <div className="w-10 h-10 rounded-md bg-gradient-to-br from-primary/40 to-primary/10 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm truncate">{t.name}</span>
+                        {t.explicit && (
+                          <span className="text-[9px] font-bold bg-muted text-muted-foreground px-1.5 py-0.5 rounded leading-none">
+                            E
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">{t.artist}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-white/5 relative">
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mb-3">
+                  Top Artists
+                </p>
+                <div className="flex gap-3">
+                  {previewArtists.map((a) => (
+                    <div key={a.name} className="flex flex-col items-center gap-1.5 flex-1 min-w-0">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/50 to-primary/10 flex items-center justify-center text-xs font-bold ring-1 ring-primary/30">
+                        {a.initials}
+                      </div>
+                      <span className="text-[11px] text-muted-foreground truncate w-full text-center">
+                        {a.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Playlist Creator */}
+      <section className="py-24 px-4">
+        <div className="container grid lg:grid-cols-2 gap-12 items-center">
+          {/* Mockup */}
+          <div>
+            <div className="glass rounded-3xl p-6 md:p-7 glow relative overflow-hidden">
+              <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="flex items-center gap-2 mb-4 relative">
+                <Wand2 className="w-4 h-4 text-primary" />
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  AI Playlist Creator
+                </span>
+              </div>
+              <div className="rounded-2xl bg-background/60 border border-white/5 p-4 mb-4 relative">
+                <p className="text-[11px] text-muted-foreground mb-2">Your prompt</p>
+                <p className="font-medium">"Rainy day jazz vibe with a hint of soul"</p>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-5 relative">
+                {promptExamples.map((p) => (
+                  <span
+                    key={p}
+                    className="text-xs px-3 py-1.5 rounded-full bg-secondary text-muted-foreground border border-white/5"
+                  >
+                    {p}
+                  </span>
+                ))}
+              </div>
+              <Button variant="default" className="w-full">
+                <Sparkles className="w-4 h-4" />
+                Generate with AI
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-primary">
+              <Wand2 className="w-3.5 h-3.5" /> AI-Powered Playlist Creator
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+              From a sentence to a{" "}
+              <span className="text-gradient">full playlist</span>
+            </h2>
+            <p className="text-muted-foreground max-w-lg">
+              Our AI engine understands natural language. Type a vibe, a moment,
+              or an activity — like <span className="text-foreground font-medium">"Rainy day jazz vibe"</span> —
+              and MixMatch builds a tailored playlist directly into your Spotify
+              library, ready to play.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="glass rounded-xl p-4">
+                <Brain className="w-5 h-5 text-primary mb-2" />
+                <p className="font-semibold text-sm mb-1">Natural language</p>
+                <p className="text-xs text-muted-foreground">No tags, no filters. Just describe it.</p>
+              </div>
+              <div className="glass rounded-xl p-4">
+                <Music className="w-5 h-5 text-primary mb-2" />
+                <p className="font-semibold text-sm mb-1">Saved to Spotify</p>
+                <p className="text-xs text-muted-foreground">Created in your account, instantly.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="py-24 px-4">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-4">
