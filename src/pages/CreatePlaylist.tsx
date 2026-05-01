@@ -62,7 +62,7 @@ const CreatePlaylist = () => {
                             <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-500"></span>
                         </div>
 
-                        <div className="flex flex-col leading-none hidden sm:flex">
+                        <div className="flex flex-col leading-none sm:flex">
                             <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
                                 Welcome back
                             </span>

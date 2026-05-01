@@ -3,13 +3,8 @@ import { motion } from "framer-motion";
 import { Users } from "lucide-react";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/utils/useAuth";
 
-interface Profile {
-  display_name: string;
-  email: string;
-  followers: number;
-  icon: string;
-}
 interface Track {
   name: string;
   artist: string;
@@ -19,13 +14,21 @@ interface Track {
 }
 interface Artist {
   name: string;
-  id: string;
   image: string;
 }
 interface DashboardData {
-  profile: Profile;
-  tracks: Track[];
-  artists: Artist[];
+  profile: {
+    display_name: string;
+    email: string;
+    followers: number;
+    icon: string;
+  };
+  tracks: {
+    tracks: Track[];
+  };
+  artists: {
+    artists: Artist[];
+  };
 }
 
 const fadeUp = {
@@ -41,22 +44,41 @@ const Dashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const {isAuthLoading} = useAuth();
+
   useEffect(() => {
     const token = sessionStorage.getItem("spotify_token");
     const api = import.meta.env.VITE_BACKEND_API;
+
+    const mockData = {
+      profile: {
+        display_name: "mikl",
+        email: "michaelle.10@hotmail.com",
+        followers: 8,
+        icon: "https://i.scdn.co/image/ab6775700000ee855a7a1b9a1df6a35c857bdfb8"
+      },
+      tracks: {
+        tracks: [
+          { name: "Numa Ilha", artist: "Marina Sena", album_name: "Coisas Naturais", album_cover: "https://i.scdn.co/image/ab67616d0000b2737ae4d78852e406eff2f4eef6", explicit: false },
+          { name: "2.0", artist: "BTS", album_name: "ARIRANG", album_cover: "https://i.scdn.co/image/ab67616d0000b273dfa17fad7f190c901603270e", explicit: false },
+          { name: "Honey", artist: "Taylor Swift", album_name: "The Life of a Showgirl", album_cover: "https://i.scdn.co/image/ab67616d0000b273d7812467811a7da6e6a44902", explicit: true },
+          { name: "Taste Back", artist: "Harry Styles", album_name: "Kiss All The Time", album_cover: "https://i.scdn.co/image/ab67616d0000b27374959140f550b11049c18a38", explicit: false },
+          { name: "Body to Body", artist: "BTS", album_name: "ARIRANG", album_cover: "https://i.scdn.co/image/ab67616d0000b273dfa17fad7f190c901603270e", explicit: false }
+        ]
+      },
+      artists: {
+        artists: [
+          { name: "Taylor Swift", image: "https://i.scdn.co/image/ab6761610000e5ebe2e8e7ff002a4afda1c7147e" },
+          { name: "BTS", image: "https://i.scdn.co/image/ab6761610000e5ebf80ec63ea7a0ef0fba60957d" },
+          { name: "Harry Styles", image: "https://i.scdn.co/image/ab6761610000e5ebe309f8c3056a59f20d0968ca" },
+          { name: "ROSALÍA", image: "https://i.scdn.co/image/ab6761610000e5eb9354faf80eb87961466edfbf" }
+        ]
+      }
+    };
+
     if (!token || !api) {
-      // Demo fallback so the page still renders gracefully
       setTimeout(() => {
-        setData({
-          profile: {
-            display_name: "Music Lover",
-            email: "you@mixmatch.app",
-            followers: 0,
-            icon: "",
-          },
-          tracks: [],
-          artists: [],
-        });
+        setData(mockData);
         setLoading(false);
       }, 800);
       return;
@@ -70,9 +92,13 @@ const Dashboard = () => {
     })
       .then((r) => r.json())
       .then((json) => setData(json))
-      .catch(() => {})
+      .catch(() => setData(mockData)) // Fallback para o mock caso a API falhe
       .finally(() => setLoading(false));
   }, []);
+
+  if (isAuthLoading) {
+        return <div className="min-h-screen bg-background" />;
+    }
 
   return (
     <div className="min-h-screen bg-background">
@@ -130,45 +156,45 @@ const Dashboard = () => {
           <div className="bg-card rounded-2xl p-3 border border-white/5">
             {loading || !data
               ? Array.from({ length: 6 }).map((_, i) => (
-                  <TrackSkeleton key={i} />
-                ))
-              : data.tracks.slice(0, 10).map((track, i) => (
-                  <motion.div
-                    key={i}
-                    custom={i}
-                    initial="hidden"
-                    animate="show"
-                    variants={fadeUp}
-                    className="flex items-center gap-4 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors group"
-                  >
-                    <span className="w-6 text-sm text-muted-foreground tabular-nums text-center">
-                      {i + 1}
-                    </span>
-                    <img
-                      src={track.album_cover}
-                      alt={track.album_name}
-                      className="w-12 h-12 rounded-md object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium truncate group-hover:text-primary transition-colors">
-                          {track.name}
+                <TrackSkeleton key={i} />
+              ))
+              : data.tracks.tracks.slice(0, 10).map((track, i) => (
+                <motion.div
+                  key={i}
+                  custom={i}
+                  initial="hidden"
+                  animate="show"
+                  variants={fadeUp}
+                  className="flex items-center gap-4 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors group"
+                >
+                  <span className="w-6 text-sm text-muted-foreground tabular-nums text-center">
+                    {i + 1}
+                  </span>
+                  <img
+                    src={track.album_cover}
+                    alt={track.album_name}
+                    className="w-12 h-12 rounded-md object-cover"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium truncate group-hover:text-primary transition-colors">
+                        {track.name}
+                      </span>
+                      {track.explicit && (
+                        <span className="text-[10px] font-bold bg-muted text-muted-foreground px-1.5 py-0.5 rounded leading-none">
+                          E
                         </span>
-                        {track.explicit && (
-                          <span className="text-[10px] font-bold bg-muted text-muted-foreground px-1.5 py-0.5 rounded leading-none">
-                            E
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {track.artist}
-                      </p>
+                      )}
                     </div>
-                    <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-[200px]">
-                      {track.album_name}
-                    </span>
-                  </motion.div>
-                ))}
+                    <p className="text-sm text-muted-foreground truncate">
+                      {track.artist}
+                    </p>
+                  </div>
+                  <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-[200px]">
+                    {track.album_name}
+                  </span>
+                </motion.div>
+              ))}
           </div>
         </section>
 
@@ -178,30 +204,29 @@ const Dashboard = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
             {loading || !data
               ? Array.from({ length: 10 }).map((_, i) => (
-                  <ArtistSkeleton key={i} />
-                ))
-              : data.artists.slice(0, 10).map((artist, i) => (
-                  <motion.div
-                    key={artist.id}
-                    custom={i}
-                    initial="hidden"
-                    animate="show"
-                    variants={fadeUp}
-                    className="group cursor-pointer"
-                  >
-                    <div className="relative aspect-square mb-3 overflow-hidden rounded-full">
-                      <img
-                        src={artist.image}
-                        alt={artist.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ring-2 ring-primary shadow-[0_0_30px_hsl(141_73%_42%/0.6)]" />
-                    </div>
-                    <p className="text-center text-sm font-semibold truncate group-hover:text-primary transition-colors">
-                      {artist.name}
-                    </p>
-                  </motion.div>
-                ))}
+                <ArtistSkeleton key={i} />
+              ))
+              : data.artists.artists.slice(0, 10).map((artist, i) => (
+                <motion.div
+                  custom={i}
+                  initial="hidden"
+                  animate="show"
+                  variants={fadeUp}
+                  className="group cursor-pointer"
+                >
+                  <div className="relative aspect-square mb-3 overflow-hidden rounded-full">
+                    <img
+                      src={artist.image}
+                      alt={artist.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ring-2 ring-primary shadow-[0_0_30px_hsl(141_73%_42%/0.6)]" />
+                  </div>
+                  <p className="text-center text-sm font-semibold truncate group-hover:text-primary transition-colors">
+                    {artist.name}
+                  </p>
+                </motion.div>
+              ))}
           </div>
         </section>
       </main>

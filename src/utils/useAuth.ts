@@ -42,7 +42,7 @@ export const useAuth = () => {
 
         if (urlToken) {
             sessionStorage.setItem('spotify_token', urlToken);
-            window.history.replaceState({}, '', '/create-playlist');
+            window.history.replaceState({}, '', '/dashboard');
             validateSession(urlToken);
         } else if (storedToken) {
             validateSession(storedToken);
