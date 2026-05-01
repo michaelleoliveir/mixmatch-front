@@ -101,18 +101,22 @@ const Index = () => {
       <section className="pt-32 pb-20 px-4">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-primary">
+              <Sparkles className="w-3.5 h-3.5" /> AI Music Management Ecosystem
+            </span>
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               Sync Your Music{" "}
               <span className="text-gradient">to Your Mood</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-lg">
-              MixMatch uses Artificial Intelligence to analyze your current vibe
-              and instantly create the perfect Spotify playlist from your library
-              and discoveries.
+              MixMatch uses Artificial Intelligence to analyze your vibe and
+              instantly create the perfect Spotify playlist. Discover your
+              personalized insights and manage your favorite tracks all in one
+              place.
             </p>
             <Button variant="hero" onClick={handleLogin}>
               <Music className="w-6 h-6" />
-              Login with Spotify
+              Log in with Spotify to Start
             </Button>
           </div>
           <HeroVisual />
