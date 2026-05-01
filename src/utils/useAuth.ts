@@ -20,17 +20,19 @@ export const useAuth = () => {
         }).then((res) => {
             if (res.ok) {
                 setIsAuthLoading(false);
-                return res.json();  
+                return res.json();
             }
         }).then((data) => {
-            setUser(data.user);
-            setIcon(data.icon);
+            if (data) {
+                setUser(data.user);
+                setIcon(data.icon);
+            }
         }).catch(() => {
             sessionStorage.removeItem('spotify_token');
             sessionStorage.setItem('auth_error', 'true');
             window.location.href = '/error'
         }).finally(() => {
-            setIsAuthLoading(false); 
+            setIsAuthLoading(false);
         });
     }, []);
 
@@ -68,6 +70,7 @@ export const useAuth = () => {
             setAuthError(error);
         } finally {
             sessionStorage.removeItem('spotify_token');
+            sessionStorage.setItem('logout_success', 'true');
             window.location.href = '/';
         }
     };

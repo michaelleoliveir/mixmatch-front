@@ -23,11 +23,20 @@ const Index = () => {
   useEffect(() => {
     if (sessionStorage.getItem('auth_error')) {
       toast.error("Access Denied", {
-        description: "You must be logged in to create playlists.",
+        description: "You must be logged in to use Mix&Match. Please login with your Spotify account to continue.",
         duration: 5000,
       });
 
       sessionStorage.removeItem('auth_error')
+    }
+
+    if(sessionStorage.getItem('logout_success')) {
+      toast.success("Logged out", {
+        description: "You have been successfully logged out.",
+        duration: 3000
+      });
+
+      sessionStorage.removeItem('logout_success')
     }
   }, []);
 
