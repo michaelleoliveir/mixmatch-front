@@ -1,6 +1,18 @@
 import { Button } from "@/components/ui/button";
 import HeroVisual from "@/components/HeroVisual";
-import { Brain, Sparkles, Music, LogIn, MessageSquare, Cpu, Headphones } from "lucide-react";
+import {
+  Brain,
+  Sparkles,
+  Music,
+  LogIn,
+  MessageSquare,
+  Cpu,
+  Headphones,
+  BarChart3,
+  Wand2,
+  TrendingUp,
+  Mic2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -25,8 +37,30 @@ const features = [
 const steps = [
   { icon: LogIn, label: "Log in with your Spotify account" },
   { icon: MessageSquare, label: "Describe your current mood or activity" },
-  { icon: Cpu, label: "Our AI curates and generates the playlist" },
+  { icon: Cpu, label: "Our AI analyzes and curates the perfect tracks" },
   { icon: Headphones, label: "The playlist appears instantly in your Spotify app" },
+];
+
+const previewTracks = [
+  { name: "Midnight City", artist: "M83", explicit: false },
+  { name: "Blinding Lights", artist: "The Weeknd", explicit: false },
+  { name: "HUMBLE.", artist: "Kendrick Lamar", explicit: true },
+  { name: "Redbone", artist: "Childish Gambino", explicit: true },
+  { name: "Sunflower", artist: "Post Malone, Swae Lee", explicit: false },
+];
+
+const previewArtists = [
+  { name: "Tame Impala", initials: "TI" },
+  { name: "Daft Punk", initials: "DP" },
+  { name: "Arctic Monkeys", initials: "AM" },
+  { name: "Frank Ocean", initials: "FO" },
+];
+
+const promptExamples = [
+  "Rainy day jazz vibe",
+  "Late-night coding focus",
+  "Sunday morning acoustic",
+  "High-energy gym session",
 ];
 
 const handleLogin = () => {
