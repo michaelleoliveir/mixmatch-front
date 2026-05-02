@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, Variants } from "framer-motion";
 import { Users } from "lucide-react";
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/utils/useAuth";
-import { Artist, useLoadData } from "@/utils/useLoadData";
+import { useLoadData } from "@/utils/useLoadData";
 import { cn } from "@/lib/utils";
+import { TrackSkeleton } from "@/components/TrackSkeleton";
+import { HeroSkeleton } from "@/components/HeroSkeleton";
+import { ArtistCard } from "@/components/ArtistCard";
+import { ArtistSkeleton } from "@/components/ArtistSkeleton";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,15 +23,6 @@ const containerVariants: Variants = {
   hidden: {},
   show: {
     transition: { staggerChildren: 0.04 },
-  },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: "easeOut" as const },
   },
 };
 
@@ -194,77 +188,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
-const HeroSkeleton = () => (
-  <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 mb-14">
-    <Skeleton className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-card" />
-    <div className="space-y-3 w-full max-w-sm">
-      <Skeleton className="h-3 w-20 bg-card" />
-      <Skeleton className="h-12 w-64 bg-card" />
-      <Skeleton className="h-6 w-40 bg-card" />
-    </div>
-  </div>
-);
-
-const TrackSkeleton = () => (
-  <div className="flex items-center gap-4 px-3 py-2.5">
-    <Skeleton className="w-6 h-4 bg-muted" />
-    <Skeleton className="w-12 h-12 rounded-md bg-muted" />
-    <div className="flex-1 space-y-2">
-      <Skeleton className="h-4 w-1/2 bg-muted" />
-      <Skeleton className="h-3 w-1/3 bg-muted" />
-    </div>
-  </div>
-);
-
-const ArtistSkeleton = () => (
-  <div>
-    <Skeleton className="aspect-square rounded-full bg-card mb-3" />
-    <Skeleton className="h-4 w-3/4 mx-auto bg-card" />
-  </div>
-);
-
-function ArtistCard({ artist, index }: { artist: Artist; index: number }) {
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="group flex cursor-pointer flex-col items-center gap-2.5"
-    >
-      <div className="relative w-full aspect-square">
-        <div className="relative w-full aspect-square overflow-hidden rounded-full">
-          <img
-            src={artist.image}
-            alt={artist.name}
-            className="absolute inset-0 h-full w-full object-cover rounded-full transition-transform duration-500 group-hover:scale-110"
-          />
-          <div className="absolute inset-0 rounded-full opacity-0 ring-2 ring-primary shadow-[0_0_28px_hsl(141_73%_42%/0.55)] transition-opacity duration-300 group-hover:opacity-100" />
-          <span className={cn(
-            "absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold backdrop-blur-md",
-            index < 3 ? "bg-primary text-black" : "border border-white/10 bg-black/70 text-white"
-          )}>
-            {index + 1}
-          </span>
-        </div>
-
-        <span
-          className={cn(
-            "absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold backdrop-blur-md",
-            index < 3
-              ? "bg-primary text-black"
-              : "border border-white/10 bg-black/70 text-white"
-          )}
-        >
-          {index + 1}
-        </span>
-      </div>
-
-      <div className="w-full space-y-0.5 text-center">
-        <p className="truncate text-sm font-semibold transition-colors group-hover:text-primary">
-          {artist.name}
-        </p>
-      </div>
-    </motion.div>
-  );
-}
 
 export default Dashboard;
