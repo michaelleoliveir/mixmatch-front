@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Users } from "lucide-react";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/utils/useAuth";
-import { useLoadData } from "@/utils/useLoadData";
+import { Artist, useLoadData } from "@/utils/useLoadData";
 import { cn } from "@/lib/utils";
 
 const fadeUp = {
@@ -16,10 +16,26 @@ const fadeUp = {
   }),
 };
 
+const containerVariants: Variants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut" as const },
+  },
+};
+
 const ranges = [
   { id: 'short_term', label: '4 Weeks' },
   { id: 'medium_term', label: '6 Months' },
-  { id: 'long_term', label: 'All Time' }
+  { id: 'long_term', label: 'Last Year' }
 ] as const;
 
 const Dashboard = () => {
@@ -154,36 +170,25 @@ const Dashboard = () => {
         </section>
 
         {/* Top Artists */}
-        <section>
-          <h2 className="text-2xl font-bold mb-5">Top 10 Artists</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
-            {isLoading || !data
-              ? Array.from({ length: 10 }).map((_, i) => (
-                <ArtistSkeleton key={i} />
-              ))
-              : data.artists.artists.slice(0, 10).map((artist, i) => (
-                <motion.div
-                  key={i}
-                  custom={i}
-                  initial="hidden"
-                  animate="show"
-                  variants={fadeUp}
-                  className="group cursor-pointer"
-                >
-                  <div className="relative aspect-square mb-3 overflow-hidden rounded-full">
-                    <img
-                      src={artist.image}
-                      alt={artist.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ring-2 ring-primary shadow-[0_0_30px_hsl(141_73%_42%/0.6)]" />
-                  </div>
-                  <p className="text-center text-sm font-semibold truncate group-hover:text-primary transition-colors">
-                    {artist.name}
-                  </p>
-                </motion.div>
-              ))}
+        <section className="space-y-5">
+          <div className="flex items-baseline">
+            <h2 className="text-2xl font-bold">Top Artists</h2>
           </div>
+
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5"
+          >
+            {isLoading || !data
+              ? Array.from({ length: 10 }).map((_, i) => <ArtistSkeleton key={i} />)
+              : data.artists.artists
+                .slice(0, 10)
+                .map((artist, i) => (
+                  <ArtistCard key={i} artist={artist} index={i} />
+                ))}
+          </motion.div>
         </section>
       </main>
     </div>
@@ -218,5 +223,48 @@ const ArtistSkeleton = () => (
     <Skeleton className="h-4 w-3/4 mx-auto bg-card" />
   </div>
 );
+
+function ArtistCard({ artist, index }: { artist: Artist; index: number }) {
+  return (
+    <motion.div
+      variants={itemVariants}
+      className="group flex cursor-pointer flex-col items-center gap-2.5"
+    >
+      <div className="relative w-full aspect-square">
+        <div className="relative w-full aspect-square overflow-hidden rounded-full">
+          <img
+            src={artist.image}
+            alt={artist.name}
+            className="absolute inset-0 h-full w-full object-cover rounded-full transition-transform duration-500 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 rounded-full opacity-0 ring-2 ring-primary shadow-[0_0_28px_hsl(141_73%_42%/0.55)] transition-opacity duration-300 group-hover:opacity-100" />
+          <span className={cn(
+            "absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold backdrop-blur-md",
+            index < 3 ? "bg-primary text-black" : "border border-white/10 bg-black/70 text-white"
+          )}>
+            {index + 1}
+          </span>
+        </div>
+
+        <span
+          className={cn(
+            "absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold backdrop-blur-md",
+            index < 3
+              ? "bg-primary text-black"
+              : "border border-white/10 bg-black/70 text-white"
+          )}
+        >
+          {index + 1}
+        </span>
+      </div>
+
+      <div className="w-full space-y-0.5 text-center">
+        <p className="truncate text-sm font-semibold transition-colors group-hover:text-primary">
+          {artist.name}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
 
 export default Dashboard;

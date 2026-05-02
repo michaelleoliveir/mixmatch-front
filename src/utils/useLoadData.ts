@@ -8,7 +8,7 @@ interface Track {
     album_cover: string;
     explicit: boolean;
 }
-interface Artist {
+export interface Artist {
     name: string;
     image: string;
 }
