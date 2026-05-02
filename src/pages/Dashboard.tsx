@@ -5,32 +5,7 @@ import DashboardSidebar from "@/components/DashboardSidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/utils/useAuth";
 import { useLoadData } from "@/utils/useLoadData";
-
-interface Track {
-  name: string;
-  artist: string;
-  album_name: string;
-  album_cover: string;
-  explicit: boolean;
-}
-interface Artist {
-  name: string;
-  image: string;
-}
-interface DashboardData {
-  profile: {
-    display_name: string;
-    email: string;
-    followers: number;
-    icon: string;
-  };
-  tracks: {
-    tracks: Track[];
-  };
-  artists: {
-    artists: Artist[];
-  };
-}
+import { cn } from "@/lib/utils";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -41,18 +16,23 @@ const fadeUp = {
   }),
 };
 
-const Dashboard = () => {
-  const {loadData, isLoading, data} = useLoadData();
+const ranges = [
+  { id: 'short_term', label: '4 Weeks' },
+  { id: 'medium_term', label: '6 Months' },
+  { id: 'long_term', label: 'All Time' }
+] as const;
 
-  const {isAuthLoading} = useAuth();
+const Dashboard = () => {
+  const { loadData, isLoading, data, setTimeRange, timeRange } = useLoadData();
+  const { isAuthLoading } = useAuth();
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    loadData(timeRange);
+  }, [loadData, timeRange]);
 
   if (isAuthLoading) {
-        return <div className="min-h-screen bg-background" />;
-    }
+    return <div className="min-h-screen bg-background" />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -106,7 +86,28 @@ const Dashboard = () => {
 
         {/* Top Tracks */}
         <section className="mb-14">
-          <h2 className="text-2xl font-bold mb-5">Top 10 Tracks</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Top 10 Tracks</h2>
+            </div>
+
+            <div className="flex bg-white/[0.03] p-1 rounded-full border border-white/10 backdrop-blur-sm">
+              {ranges.map((range) => (
+                <button
+                  key={range.id}
+                  onClick={() => setTimeRange(range.id)}
+                  className={cn(
+                    "px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all duration-300",
+                    timeRange === range.id
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "text-muted-foreground hover:text-white"
+                  )}
+                >
+                  {range.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="bg-card rounded-2xl p-3 border border-white/5">
             {isLoading || !data
               ? Array.from({ length: 6 }).map((_, i) => (
@@ -162,6 +163,7 @@ const Dashboard = () => {
               ))
               : data.artists.artists.slice(0, 10).map((artist, i) => (
                 <motion.div
+                  key={i}
                   custom={i}
                   initial="hidden"
                   animate="show"
