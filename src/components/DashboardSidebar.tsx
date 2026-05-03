@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, LogOut, Sparkles } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/utils/useAuth";
 

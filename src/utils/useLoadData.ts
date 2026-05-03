@@ -1,31 +1,6 @@
+import { DashboardData } from "@/types/dashboard";
 import { useCallback, useState } from "react"
 import { toast } from "sonner";
-
-interface Track {
-    name: string;
-    artist: string;
-    album_name: string;
-    album_cover: string;
-    explicit: boolean;
-}
-export interface Artist {
-    name: string;
-    image: string;
-}
-interface DashboardData {
-    profile: {
-        display_name: string;
-        email: string;
-        followers: number;
-        icon: string;
-    };
-    tracks: {
-        tracks: Track[];
-    };
-    artists: {
-        artists: Artist[];
-    };
-}
 
 type TimeRangeValue = 'short_term' | 'medium_term' | 'long_term';
 

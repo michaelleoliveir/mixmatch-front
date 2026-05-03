@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Artist } from "@/utils/useLoadData";
+import { Artist } from "@/types/artist";
 import { motion, Variants } from "framer-motion";
 
 const itemVariants: Variants = {

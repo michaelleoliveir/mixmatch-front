@@ -1,14 +1,19 @@
+// importações
 import { useEffect } from "react";
 import { motion, Variants } from "framer-motion";
 import { Users } from "lucide-react";
+
+// componentes
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { useAuth } from "@/utils/useAuth";
-import { useLoadData } from "@/utils/useLoadData";
-import { cn } from "@/lib/utils";
 import { TrackSkeleton } from "@/components/TrackSkeleton";
 import { HeroSkeleton } from "@/components/HeroSkeleton";
 import { ArtistCard } from "@/components/ArtistCard";
 import { ArtistSkeleton } from "@/components/ArtistSkeleton";
+
+// dados úteis
+import { useAuth } from "@/utils/useAuth";
+import { useLoadData } from "@/utils/useLoadData";
+import { cn } from "@/lib/utils";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
