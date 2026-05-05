@@ -7,6 +7,8 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import CreatePlaylist from "./pages/CreatePlaylist.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import Match from "./pages/Match.tsx";
+import MatchResult from "./pages/MatchResult.tsx";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/create-playlist" element={<CreatePlaylist />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/match" element={<Match />} />
+          <Route path="/match/result" element={<MatchResult />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
