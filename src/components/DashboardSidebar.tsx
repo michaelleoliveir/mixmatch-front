@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, LogOut, Sparkles } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/utils/useAuth";
@@ -7,6 +7,7 @@ import { useAuth } from "@/utils/useAuth";
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Create Playlist", url: "/create-playlist", icon: Sparkles },
+  { title: "Mix & Match", url: "/match", icon: Heart },
 ];
 
 const DashboardSidebar = () => {
