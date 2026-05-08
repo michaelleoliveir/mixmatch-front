@@ -42,8 +42,8 @@ const Dashboard = () => {
   const { isAuthLoading } = useAuth();
 
   useEffect(() => {
-    loadData(timeRange);
-  }, [loadData, timeRange]);
+    loadData();
+  }, [loadData]);
 
   if (isAuthLoading) {
     return <div className="min-h-screen bg-background" />;

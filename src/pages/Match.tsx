@@ -8,6 +8,7 @@ import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useMatch } from "@/utils/useMatch";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -27,18 +28,19 @@ const mockHistory = [
 ];
 
 const Match = () => {
-  const shareLink = "https://mixmatch.com/match/8f3a-9b21-user-uuid";
   const [copied, setCopied] = useState(false);
 
+  const {link} = useMatch();
+
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(shareLink);
+    await navigator.clipboard.writeText(link);
     setCopied(true);
     toast.success("Link copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleWhatsApp = () => {
-    const text = encodeURIComponent(`Compare your music taste with mine on MixMatch: ${shareLink}`);
+    const text = encodeURIComponent(`Compare your music taste with mine on MixMatch: ${link}`);
     window.open(`https://wa.me/?text=${text}`, "_blank");
   };
 
@@ -90,7 +92,7 @@ const Match = () => {
           <div className="flex flex-col md:flex-row gap-3">
             <Input
               readOnly
-              value={shareLink}
+              value={link || 'Generating link...'}
               className="flex-1 h-12 rounded-full bg-black/40 border-white/10 text-sm font-mono text-foreground/90 px-5"
             />
             <div className="flex gap-3">

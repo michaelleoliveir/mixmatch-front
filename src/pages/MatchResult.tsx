@@ -5,6 +5,7 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/utils/useAuth";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -76,6 +77,7 @@ const MatchResult = () => {
   const [params] = useSearchParams();
   const isGuest = params.get("guest") === "1";
   const [count, setCount] = useState(0);
+  const { isAuthLoading } = useAuth();
 
   useEffect(() => {
     let raf: number;
@@ -89,6 +91,10 @@ const MatchResult = () => {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
+
+  if (isAuthLoading) {
+    return <div className="min-h-screen bg-background" />;
+  }
 
   return (
     <div className="min-h-screen bg-background">

@@ -9,7 +9,7 @@ export const useLoadData = () => {
     const [data, setData] = useState<DashboardData | null>(null);
     const [timeRange, setTimeRange] = useState<TimeRangeValue>('medium_term');
 
-    const loadData = useCallback(async (timeRange: TimeRangeValue) => {
+    const loadData = useCallback(async () => {
         setIsLoading(true);
 
         try {
@@ -25,7 +25,6 @@ export const useLoadData = () => {
                 const data = await response.json() as DashboardData;
                 setData(data);
                 setIsLoading(false);
-                console.log(data);
             } else {
                 throw new Error();
             }
@@ -36,7 +35,7 @@ export const useLoadData = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [timeRange]);
 
     return { loadData, isLoading, data, setTimeRange, timeRange }
 }
