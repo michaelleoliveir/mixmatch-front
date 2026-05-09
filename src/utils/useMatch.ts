@@ -1,3 +1,4 @@
+import { MatchData } from "@/types/match";
 import { useCallback, useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -5,7 +6,8 @@ import { toast } from "sonner";
 export const useMatch = () => {
     const [link, setLink] = useState<string | null>(null);
     const { matchCode } = useParams<{ matchCode: string }>();
-    const [data, setData] = useState();
+    const [data, setData] = useState<MatchData | null>(null);
+    const [loading, setIsLoading] = useState(false)
 
     const matchLink = useCallback(async () => {
         try {
@@ -29,6 +31,7 @@ export const useMatch = () => {
     }, []);
 
     const fetchMatch = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await fetch(import.meta.env.VITE_BACKEND_API + `/match/${matchCode}`, {
                 method: 'GET',
@@ -46,6 +49,8 @@ export const useMatch = () => {
             toast.error("Could not load data", {
                 description: "There was a problem connecting to Spotify. Try again.",
             });
+        } finally {
+            setIsLoading(false)
         }
     }, [matchCode]);
 
@@ -57,5 +62,5 @@ export const useMatch = () => {
         matchLink();
     }, [matchCode, fetchMatch, matchLink]);
 
-    return { matchLink, link };
+    return { matchLink, link, data, loading };
 }
