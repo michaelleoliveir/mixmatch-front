@@ -41,7 +41,6 @@ export const useMatch = () => {
             if (response.ok) {
                 const matching = await response.json();
                 setData(matching);
-                console.log(matching);
             }
         } catch (error) {
             toast.error("Could not load data", {
