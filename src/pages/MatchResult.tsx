@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion, Variants } from "framer-motion";
-import { ArrowLeft, Music2, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/utils/useAuth";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useMatch } from "@/utils/useMatch";
+import { ScoreRing } from "@/components/ScoreRing";
+import { SkeletonView } from "@/components/SkeletonView";
+import { EmptyState } from "@/components/EmptyState";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -18,102 +19,7 @@ const fadeUp: Variants = {
   }),
 };
 
-const ScoreRing = ({ value }: { value: number }) => {
-  const size = 260;
-  const stroke = 16;
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const offset = c - (value / 100) * c;
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let raf: number;
-    const start = performance.now();
-    const duration = 1600;
-    const tick = (t: number) => {
-      const p = Math.min((t - start) / duration, 1);
-      setCount(Math.round(p * value * 10) / 10);
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [value]);
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <div className="absolute inset-0 rounded-full bg-primary/30 blur-3xl animate-pulse-glow" />
-      <svg width={size} height={size} className="relative -rotate-90">
-        <defs>
-          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(141 73% 42%)" />
-            <stop offset="100%" stopColor="hsl(160 84% 60%)" />
-          </linearGradient>
-        </defs>
-        <circle cx={size / 2} cy={size / 2} r={r} stroke="hsl(var(--secondary))" strokeWidth={stroke} fill="none" />
-        <motion.circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          stroke="url(#ringGrad)"
-          strokeWidth={stroke}
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={c}
-          initial={{ strokeDashoffset: c }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1.6, ease: "easeOut" }}
-          style={{ filter: "drop-shadow(0 0 14px hsl(var(--primary) / 0.7))" }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-6xl md:text-7xl font-extrabold tabular-nums text-gradient">
-          {count.toFixed(1)}%
-        </span>
-        <span className="mt-2 text-xs uppercase tracking-[0.3em] text-primary font-semibold">
-          In Sync
-        </span>
-      </div>
-    </div>
-  );
-};
-
-const SkeletonView = () => (
-  <main className="md:ml-64 px-6 md:px-10 py-10 pb-28 md:pb-10 max-w-5xl">
-    <Skeleton className="h-48 rounded-3xl bg-card mb-10" />
-    <div className="flex justify-center mb-14">
-      <Skeleton className="w-64 h-64 rounded-full bg-card" />
-    </div>
-    <Skeleton className="h-4 w-40 bg-card mb-5" />
-    <div className="grid grid-cols-3 md:grid-cols-6 gap-5 mb-12">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="space-y-2">
-          <Skeleton className="aspect-square rounded-full bg-card" />
-          <Skeleton className="h-3 w-3/4 mx-auto bg-card" />
-        </div>
-      ))}
-    </div>
-    <Skeleton className="h-4 w-40 bg-card mb-5" />
-    <div className="space-y-3">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Skeleton key={i} className="h-16 rounded-xl bg-card" />
-      ))}
-    </div>
-  </main>
-);
-
-const EmptyState = ({ message }: { message: string }) => (
-  <div className="rounded-2xl glass border border-white/10 p-10 text-center">
-    <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-      <Music2 className="w-7 h-7 text-primary" />
-    </div>
-    <h3 className="text-lg font-bold mb-1">No matches yet</h3>
-    <p className="text-sm text-muted-foreground">{message}</p>
-  </div>
-);
-
 const MatchResult = () => {
-  const [params] = useSearchParams();
-  const isGuest = params.get("guest") === "1";
   const { data, loading } = useMatch();
   const { isAuthLoading } = useAuth();
 
@@ -269,29 +175,14 @@ const MatchResult = () => {
             animate="show"
             variants={fadeUp}
             custom={4}
-            className="rounded-2xl glass p-8 text-center border border-white/10"
+            className="rounded-2xl text-start"
           >
-            {isGuest ? (
-              <>
-                <h3 className="text-2xl font-bold mb-2">Curious about your own taste?</h3>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Connect Spotify and unlock your personal MixMatch dashboard.
-                </p>
-                <Button asChild variant="hero" size="lg">
-                  <Link to="/">
-                    <Sparkles className="w-4 h-4" />
-                    Create My Own Dashboard
-                  </Link>
-                </Button>
-              </>
-            ) : (
-              <Button asChild variant="outline" size="lg">
-                <Link to="/match">
-                  <ArrowLeft className="w-4 h-4" />
-                  Back to Hub
-                </Link>
-              </Button>
-            )}
+            <Button asChild variant="outline" size="lg">
+              <Link to="/match">
+                <ArrowLeft className="w-4 h-4" />
+                Back to Hub
+              </Link>
+            </Button>
           </motion.section>
         </main>
       )}
