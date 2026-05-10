@@ -1,9 +1,10 @@
 import { MatchData } from "@/types/match";
 import { useCallback, useEffect, useState } from "react"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useMatch = () => {
+    const navigate = useNavigate();
     const [link, setLink] = useState<string | null>(null);
     const { matchCode } = useParams<{ matchCode: string }>();
     const [data, setData] = useState<MatchData | null>(null);
@@ -41,13 +42,28 @@ export const useMatch = () => {
                 }
             });
 
+            const matching = await response.json();
+
             if (response.ok) {
-                const matching = await response.json();
                 setData(matching);
+            } else {
+                if (response.status === 400) {
+                    setData(null);
+                    navigate('/dashboard');
+                    toast.error("Could not load data", {
+                        description: matching.message || 'Could not compare profiles. Try again later.',
+                    });
+
+                    return;
+                }
+
+                toast.error("Error", {
+                    description: matching.message || 'Could not compare profiles. Try again later.',
+                });
             }
         } catch (error) {
-            toast.error("Could not load data", {
-                description: "There was a problem connecting to Spotify. Try again.",
+            toast.error("Network Error", {
+                description: "Could not connect to the server. Please try again.",
             });
         } finally {
             setIsLoading(false)
@@ -55,7 +71,7 @@ export const useMatch = () => {
     }, [matchCode]);
 
     useEffect(() => {
-        if(matchCode) {
+        if (matchCode) {
             fetchMatch();
         }
 

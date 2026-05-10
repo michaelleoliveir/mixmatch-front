@@ -19,6 +19,15 @@ const fadeUp: Variants = {
   }),
 };
 
+const getMatchMessage = (percent: number) => {
+  if (percent >= 90) return "Basically musical soulmates. This is rare!";
+  if (percent >= 70) return "You guys share some serious taste. High vibes only!";
+  if (percent >= 40) return "A solid overlap! You'd definitely agree on the car playlist.";
+  if (percent >= 10) return "A few hits in common, but plenty of room to explore.";
+  if (percent > 0) return "Different worlds, but hey, opposites attract!";
+  return "Absolute zero! You two have completely different taste... and that's actually impressive.";
+};
+
 const MatchResult = () => {
   const { data, loading } = useMatch();
   const { isAuthLoading } = useAuth();
@@ -46,18 +55,34 @@ const MatchResult = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-emerald-500/10 pointer-events-none" />
             <div className="relative">
               <span className="inline-block px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-4">
-                It's a Match
+                {data.match_percent > 0 ? "It's a Match" : "Pure Discovery"}
               </span>
+
               <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
-                You and{" "}
-                <span className="text-gradient">{data.owner_name}</span>
-                <br />
-                are{" "}
-                <span className="text-primary">{data.match_percent}%</span> in sync
+                {data.match_percent > 0 ? (
+                  <>
+                    You and <span className="text-gradient">{data.owner_name}</span>
+                    <br />
+                    are <span className="text-primary">{data.match_percent}%</span> in sync
+                  </>
+                ) : (
+                  <>
+                    You and <span className="text-gradient">{data.owner_name}</span>
+                    <br />
+                    live in <span className="text-primary">different</span> dimensions
+                  </>
+                )}
               </h1>
-              <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
-                A shared soundtrack of artists, tracks and vibes you both love.
+
+              <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl mx-auto italic">
+                "{getMatchMessage(data.match_percent)}"
               </p>
+
+              {data.match_percent === 0 && (
+                <p className="mt-2 text-xs text-primary/70">
+                  No common ground found. Time to introduce each other to something new!
+                </p>
+              )}
             </div>
           </motion.section>
 
