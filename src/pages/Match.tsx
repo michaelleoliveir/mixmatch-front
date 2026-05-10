@@ -147,13 +147,6 @@ const Match = () => {
               </motion.div>
             ))}
           </div>
-
-          <div className="mt-8 flex justify-center">
-            <Button variant="ghost" size="sm" className="text-muted-foreground">
-              <Sparkles className="w-4 h-4" />
-              Load more matches
-            </Button>
-          </div>
         </section>
       </main>
     </div>

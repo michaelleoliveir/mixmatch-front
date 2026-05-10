@@ -7,7 +7,7 @@ import { useAuth } from "@/utils/useAuth";
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Create Playlist", url: "/create-playlist", icon: Sparkles },
-  { title: "Mix & Match", url: "/match", icon: Heart },
+  { title: "Match", url: "/match", icon: Heart },
 ];
 
 const DashboardSidebar = () => {
@@ -19,7 +19,7 @@ const DashboardSidebar = () => {
           <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold tracking-tight">MixMatch</span>
+          <span className="text-xl font-bold tracking-tight">Mix&Match</span>
         </div>
 
         <nav className="flex flex-col gap-1">
