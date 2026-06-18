@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, Variants } from "framer-motion";
 import { Check, ChevronRight, Copy, Heart, Share2, Sparkles } from "lucide-react";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useMatch } from "@/utils/useMatch";
+import { useRanking } from "@/utils/useRanking";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -19,18 +20,15 @@ const fadeUp: Variants = {
   }),
 };
 
-const mockHistory = [
-  { id: "1", name: "Sofia Martins", date: "May 2, 2026", score: 92, avatar: "https://i.pravatar.cc/120?img=47" },
-  { id: "2", name: "Lucas Pereira", date: "Apr 28, 2026", score: 78, avatar: "https://i.pravatar.cc/120?img=12" },
-  { id: "3", name: "Aiko Tanaka", date: "Apr 21, 2026", score: 65, avatar: "https://i.pravatar.cc/120?img=32" },
-  { id: "4", name: "Marco Silva", date: "Apr 14, 2026", score: 54, avatar: "https://i.pravatar.cc/120?img=15" },
-  { id: "5", name: "Elena Rossi", date: "Apr 03, 2026", score: 41, avatar: "https://i.pravatar.cc/120?img=49" },
-];
-
 const Match = () => {
   const [copied, setCopied] = useState(false);
+  const { ranking, rankingResponse } = useRanking();
 
-  const {link} = useMatch();
+  const { link } = useMatch();
+
+  useEffect(() => {
+    rankingResponse();
+  }, [rankingResponse]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(link);
@@ -112,13 +110,13 @@ const Match = () => {
         <section>
           <div className="flex items-baseline justify-between mb-6">
             <h2 className="text-2xl font-bold tracking-tight">Match History</h2>
-            <span className="text-xs text-muted-foreground">{mockHistory.length} matches</span>
+            <span className="text-xs text-muted-foreground">{(ranking).length} matches</span>
           </div>
 
           <div className="bg-card rounded-2xl border border-white/5 p-2">
-            {mockHistory.map((m, i) => (
+            {ranking.map((m, i) => (
               <motion.div
-                key={m.id}
+                key={i}
                 custom={i}
                 initial="hidden"
                 animate="show"
@@ -129,15 +127,17 @@ const Match = () => {
                   className="flex items-center gap-4 px-3 md:px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
                 >
                   <img
-                    src={m.avatar}
-                    alt={m.name}
+                    src={m.user.icon}
+                    alt={m.user.name}
                     className="w-12 h-12 rounded-full object-cover ring-1 ring-white/10"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate group-hover:text-primary transition-colors">
-                      {m.name}
+                      {m.user.name}
                     </p>
-                    <p className="text-xs text-muted-foreground">{m.date}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(m.registered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
                   </div>
                   <div className={cn("text-2xl md:text-3xl font-extrabold tabular-nums", scoreColor(m.score))}>
                     {m.score}%
