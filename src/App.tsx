@@ -9,6 +9,7 @@ import CreatePlaylist from "./pages/CreatePlaylist.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Match from "./pages/Match.tsx";
 import MatchResult from "./pages/MatchResult.tsx";
+import MatchDetail from "./pages/MatchDetail.tsx";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/match" element={<Match />} />
           <Route path="/match/:matchCode" element={<MatchResult />} />
+          <Route path="/match/detail/:id" element={<MatchDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
