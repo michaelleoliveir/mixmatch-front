@@ -125,7 +125,7 @@ const Match = () => {
                 variants={fadeUp}
               >
                 <Link
-                  to="/match/result"
+                  to={`/match/detail/${m.id}`}
                   className="flex items-center gap-4 px-3 md:px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
                 >
                   <img
