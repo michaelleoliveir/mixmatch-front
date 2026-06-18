@@ -9,6 +9,7 @@ import CreatePlaylist from "./pages/CreatePlaylist.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Match from "./pages/Match.tsx";
 import MatchResult from "./pages/MatchResult.tsx";
+import MatchDetail from "./pages/MatchDetail.tsx";
 
 const queryClient = new QueryClient();
 
