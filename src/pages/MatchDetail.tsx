@@ -9,14 +9,7 @@ import { SkeletonView } from "@/components/SkeletonView";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-
-interface MatchDetailData {
-  user: { name: string; icon: string };
-  score: number;
-  registered_at: string;
-  artists_match: { name: string; photo: string }[];
-  tracks_match: { name: string; artist: string; album: string; photo: string }[];
-}
+import { useRanking } from "@/utils/useRanking";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -31,42 +24,22 @@ const scoreColor = (score: number) =>
   score >= 80 ? "text-primary" : score >= 60 ? "text-emerald-300" : "text-muted-foreground";
 
 const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-
-// Mock fetch — replace with real API later
-const mockData: MatchDetailData = {
-  user: { name: "Sofia Martins", icon: "https://i.pravatar.cc/160?img=47" },
-  score: 87.4,
-  registered_at: "2026-06-17T12:00:00Z",
-  artists_match: [
-    { name: "Tame Impala", photo: "https://i.scdn.co/image/ab6761610000e5eb490d11ab2cf06d75c6cb29ee" },
-    { name: "Arctic Monkeys", photo: "https://i.scdn.co/image/ab6761610000e5eb7da39dea0a72f581535fb11f" },
-    { name: "The Weeknd", photo: "https://i.scdn.co/image/ab6761610000e5eb9e528993a2820267b97f6aae" },
-    { name: "Daft Punk", photo: "https://i.scdn.co/image/ab6761610000e5eb6c576c5bd1c1a4d52f7d9931" },
-    { name: "Glass Animals", photo: "https://i.scdn.co/image/ab6761610000e5eb1c61124e9275b6f10b9a8aa3" },
-    { name: "Phoenix", photo: "https://i.scdn.co/image/ab6761610000e5ebb29f5e7b86df1eaeec1bd54b" },
-  ],
-  tracks_match: [
-    { name: "The Less I Know The Better", artist: "Tame Impala", album: "Currents", photo: "https://i.scdn.co/image/ab67616d0000b2739e1cfc756886ac782e363d79" },
-    { name: "Blinding Lights", artist: "The Weeknd", album: "After Hours", photo: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36" },
-    { name: "Do I Wanna Know?", artist: "Arctic Monkeys", album: "AM", photo: "https://i.scdn.co/image/ab67616d0000b273f50aaecbf26c5dccf6c4b50e" },
-    { name: "Heat Waves", artist: "Glass Animals", album: "Dreamland", photo: "https://i.scdn.co/image/ab67616d0000b2739e495fb707973f3390850eea" },
-    { name: "Get Lucky", artist: "Daft Punk", album: "Random Access Memories", photo: "https://i.scdn.co/image/ab67616d0000b273b89e924e2da55ff7c0a4d4ab" },
-  ],
-};
+  new Date(iso.replace(/(\.\d{3})\d+/, '$1'))
+    .toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
 
 const MatchDetail = () => {
-  useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<MatchDetailData | null>(null);
+  const { rankingDetails, rankingDetailResponse } = useRanking();
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      setData(mockData);
+    if (!id) return;
+    const load = async () => {
+      await rankingDetailResponse(id);
       setLoading(false);
-    }, 800);
-    return () => clearTimeout(t);
-  }, []);
+    };
+    load();
+  }, [id, rankingDetailResponse]);
 
   if (loading) {
     return (
@@ -77,7 +50,7 @@ const MatchDetail = () => {
     );
   }
 
-  if (!data) {
+  if (!rankingDetails) {
     return (
       <div className="min-h-screen bg-background">
         <DashboardSidebar />
@@ -114,20 +87,20 @@ const MatchDetail = () => {
 
             <div className="flex items-center gap-4 mb-4">
               <img
-                src={data.user.icon}
-                alt={data.user.name}
+                src={rankingDetails.owner.icon}
+                alt={rankingDetails.owner.name}
                 className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/40"
               />
               <div>
                 <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
-                  You & <span className="text-gradient">{data.user.name}</span>
+                  You & <span className="text-gradient">{rankingDetails.visitor.name}</span>
                 </h1>
-                <p className="text-muted-foreground text-sm mt-1">{formatDate(data.registered_at)}</p>
+                <p className="text-muted-foreground text-sm mt-1">{formatDate(rankingDetails.date)}</p>
               </div>
             </div>
 
-            <div className={cn("inline-block text-sm font-bold tabular-nums", scoreColor(data.score))}>
-              {data.score.toFixed(1)}% compatibility
+            <div className={cn("inline-block text-sm font-bold tabular-nums", scoreColor(rankingDetails.score))}>
+              {rankingDetails.score.toFixed(1)}% compatibility
             </div>
           </div>
         </motion.section>
@@ -140,7 +113,7 @@ const MatchDetail = () => {
           custom={1}
           className="flex justify-center mb-16"
         >
-          <ScoreRing value={data.score} />
+          <ScoreRing value={rankingDetails.score} />
         </motion.section>
 
         {/* Artists */}
@@ -156,15 +129,15 @@ const MatchDetail = () => {
               Artists You Both Love
             </h2>
             <span className="text-xs text-muted-foreground">
-              {data.artists_match.length} in common
+              {(rankingDetails.artists_match ?? []).length} in common
             </span>
           </div>
 
-          {data.artists_match.length === 0 ? (
+          {(rankingDetails.artists_match ?? []).length === 0 ? (
             <EmptyState message="No common artists found between you two." />
           ) : (
             <div className="flex gap-5 overflow-x-auto pb-3 -mx-2 px-2 md:grid md:grid-cols-6 md:overflow-visible">
-              {data.artists_match.map((a, i) => (
+              {(rankingDetails.artists_match ?? []).map((a, i) => (
                 <motion.div
                   key={`${a.name}-${i}`}
                   initial={{ opacity: 0, scale: 0.85 }}
@@ -203,15 +176,15 @@ const MatchDetail = () => {
               Tracks On Repeat
             </h2>
             <span className="text-xs text-muted-foreground">
-              {data.tracks_match.length} in common
+              {(rankingDetails.tracks_match ?? []).length} in common
             </span>
           </div>
 
-          {data.tracks_match.length === 0 ? (
+          {(rankingDetails.tracks_match ?? []).length === 0 ? (
             <EmptyState message="No shared tracks yet — keep listening!" />
           ) : (
             <ul className="space-y-2">
-              {data.tracks_match.map((t, i) => (
+              {(rankingDetails.tracks_match ?? []).map((t, i) => (
                 <motion.li
                   key={`${t.name}-${i}`}
                   initial={{ opacity: 0, x: -12 }}
@@ -233,7 +206,7 @@ const MatchDetail = () => {
                       {t.name}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {t.artist} • {t.album}
+                      {t.name} • {t.album}
                     </p>
                   </div>
                 </motion.li>

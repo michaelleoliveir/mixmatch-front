@@ -1,4 +1,5 @@
 export interface Ranking {
+    id: string,
     user: {
         name: string,
         icon: string

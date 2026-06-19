@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useMatch } from "@/utils/useMatch";
 import { useRanking } from "@/utils/useRanking";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -22,7 +23,7 @@ const fadeUp: Variants = {
 
 const Match = () => {
   const [copied, setCopied] = useState(false);
-  const { ranking, rankingResponse } = useRanking();
+  const { ranking, rankingResponse, loading } = useRanking();
 
   const { link } = useMatch();
 
@@ -114,38 +115,52 @@ const Match = () => {
           </div>
 
           <div className="bg-card rounded-2xl border border-white/5 p-2">
-            {ranking.map((m, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                animate="show"
-                variants={fadeUp}
-              >
-                <Link
-                  to={`/match/detail/${m.id}`}
-                  className="flex items-center gap-4 px-3 md:px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-3 md:px-4 py-3">
+                  <Skeleton className="w-12 h-12 rounded-full bg-card" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-1/3 bg-card" />
+                    <Skeleton className="h-3 w-1/4 bg-card" />
+                  </div>
+                  <Skeleton className="h-8 w-16 bg-card" />
+                </div>
+              ))
+            ) : (
+
+              ranking.map((m, i) => (
+                <motion.div
+                  key={i}
+                  custom={i}
+                  initial="hidden"
+                  animate="show"
+                  variants={fadeUp}
                 >
-                  <img
-                    src={m.user.icon}
-                    alt={m.user.name}
-                    className="w-12 h-12 rounded-full object-cover ring-1 ring-white/10"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate group-hover:text-primary transition-colors">
-                      {m.user.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(m.registered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </p>
-                  </div>
-                  <div className={cn("text-2xl md:text-3xl font-extrabold tabular-nums", scoreColor(m.score))}>
-                    {m.score}%
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={`/match/detail/${m.id}`}
+                    className="flex items-center gap-4 px-3 md:px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                  >
+                    <img
+                      src={m.user.icon}
+                      alt={m.user.name}
+                      className="w-12 h-12 rounded-full object-cover ring-1 ring-white/10"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate group-hover:text-primary transition-colors">
+                        {m.user.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(m.registered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <div className={cn("text-2xl md:text-3xl font-extrabold tabular-nums", scoreColor(m.score))}>
+                      {m.score}%
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </Link>
+                </motion.div>
+              ))
+            )}
           </div>
         </section>
       </main>
